@@ -1,0 +1,203 @@
+---
+title: "MB5370-Techniques in MS- Exercise 2.12"
+output: html_document
+date: "2026-06-04"
+---
+
+#Introduction
+Here we are wrangling raw data from the Ross River Estuary fish surveys and the goal is to produce clean data to general tables and figures to represent the relationship between water quality and predatory fish assemblages.
+
+```{r}
+getwd()
+```
+# Housekeeping
+```{r}
+rm(list=ls())
+```
+
+# Packages
+```{r}
+library(tidyverse) #ggplot, lubridate, 
+library(readxl) # read excel files
+```
+
+# Load files
+## Metadata
+```{r}
+metadata<-read.csv("C:/Users/jd131798/Downloads/estuary_metadata.csv")|>
+   mutate(
+    site_name_clean=str_to_lower(site_name), 
+    site_name_clean=str_replace_all(site_name_clean, pattern=" ", replacement="_"),
+    site_name_clean=str_trim(site_name_clean)
+  )
+
+```
+
+```{r}
+#Phase 1: Ingestion and Decontamination
+#main dataset-- bind data all four sites to one data frame
+catch1<-read_excel("C:/Users/jd131798/Downloads/estuary_catch_log.xlsx", sheet="Lower_ross")
+catch2<- read_excel("C:/Users/jd131798/Downloads/estuary_catch_log.xlsx", sheet="Mid_Ross ")
+catch3<-read_excel("C:/Users/jd131798/Downloads/estuary_catch_log.xlsx", sheet="ROSS MOUTH")
+catch4<-read_excel("C:/Users/jd131798/Downloads/estuary_catch_log.xlsx", sheet="Upper Ross")
+catch_data_raw<-bind_rows(catch1,catch2,catch3,catch4)
+```
+
+
+```{r}
+catch_data_raw
+head(catch_data_raw)
+glimpse(catch_data_raw)
+str(catch_data_raw)
+
+
+# cleans species names to lowercase
+catch_data<-catch_data_raw|>
+ mutate(
+    species_clean=str_to_lower(species),
+    species_clean=str_replace_all(species_clean,pattern=" ", replacement="_"), 
+    species_clean= str_trim(species_clean)
+  )|>
+  mutate(
+    site_clean=str_to_lower(site), 
+    site_clean=str_replace_all(site_clean, pattern=" ", replacement="_"),
+    site_clean=str_trim(site_clean)
+  )
+# need to fix the site name to all lowercase
+```
+
+```{r}
+#Load Taxaonomic Dictionary-- to input into catch log for species scientific names
+species_dict<-read.csv("C:/Users/jd131798/Downloads/species_dictionary.csv")
+head(species_dict)
+
+```
+
+```{r}
+# joining scientific name to species name in catch data final(Phase 2: Taxonomic translation)
+catch_data_final<-catch_data|>
+left_join(species_dict, by = join_by(species_clean==common_name))
+```
+
+#--------------# Sensor Data-Sonde- dataset
+
+```{r}
+#Load sensor Data
+sensor_raw<- read.csv("C:/Users/jd131798/Downloads/estuary_sonde_data.csv")
+sensor_raw
+head(sensor_raw)
+glimpse(sensor_raw)
+str(sensor_raw)
+```
+
+```{r}
+# Hardware errors and Temporal Parsing
+#Change the dates in the dataset to formal date-time objects, N/A turbidity sensor errors
+sensor_data<- sensor_raw|>
+  mutate(
+    datetime=dmy_hm(timestamp),
+    turbidity= na_if(turbidity, -999),
+    salinity=ifelse(salinity<0, NA, salinity)
+  )
+head(sensor_data)
+```
+
+
+
+##Phase 2: The Relational Architecture
+####Notes:
+
+```{r}
+#sensor sonde dataset, summarize into daily mean calculations for each site
+sensor_daily<-
+sensor_data|>
+  mutate(
+    date= floor_date(datetime, "day"),
+    date= as_date(date)
+  )|>
+  group_by(site, date)|>
+  summarise(
+    mean_temp=mean(temperature, na.rm=TRUE), 
+    mean_salinity=mean(salinity, na.rm=TRUE), 
+    .groups="drop"
+  )
+
+```
+
+```{r}
+catch_data_finalized<-catch_data_final|>
+  left_join(metadata, by=join_by(site_clean==site_name_clean))|>
+  left_join(sensor_daily, by= join_by(site_clean==site, date))|>
+ ##Phase 3: The Zero-Catch Framework
+   complete(
+    nesting(site_clean, date, zone, mean_temp, mean_salinity), 
+    scientific_name
+  )|>
+  mutate(
+    count=coalesce(count, 0))
+
+head(catch_data_finalized)
+```
+#Phase 4: Statistical Exrtaction 
+```{r}
+catch_data_finalized|>
+  group_by(scientific_name, zone)|>
+  summarise(n=n(),
+    sem_salinity=sd(mean_salinity,na.rm=TRUE)/sqrt((n)),
+    median_salinity=median(mean_salinity, na.rm=TRUE),
+    .groups="drop"
+  )
+```
+#Phase 5: Visual Communication 
+```{r}
+fish_stats<- catch_data_finalized|>
+  group_by(scientific_name, zone)|>
+  summarise(n=n(),
+    mean_catch = (mean(count, na.rm=TRUE)),
+    sem_catch = (sd(count, na.rm=TRUE)/sqrt((n))),
+    .groups="drop"
+  )
+print(fish_stats)
+```
+
+```{r}
+fish_stats|>
+  ggplot(aes(x=zone, y=mean_catch, fill=zone))+
+  geom_point(data=catch_data_finalized, aes(x=zone, y=count),
+             poition=position_jitter(width=0.2), alpha=0.8, size=1, inherit.aes=FALSE)+
+  geom_point(position="dodge", size=2, pch=23)+
+  
+  geom_errorbar(aes(ymin=mean_catch-sem_catch,ymax=mean_catch + sem_catch),
+                position=position_dodge(0.9), width=0.2)+
+  facet_wrap(~scientific_name,scales="fixed")+
+  theme_minimal()+
+  theme(
+    strip.text=element_text(face="italic", size=10, colour="grey20"),
+    legend.position="none"
+  )+
+  labs(
+    title= " Fish abundance across Estuarine Salinity Gradients",
+    subtitle= " Ross River Estuary System, May 2026",
+    x="Spatial Zone",
+    y="Abundance(per day)", 
+    fill="Spatial Zone"
+  )
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+
