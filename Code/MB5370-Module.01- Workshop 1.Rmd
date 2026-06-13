@@ -1,0 +1,168 @@
+#-------------------------------------#
+title: "MB5370: Techniques in Marine Science 1- Module 1. Workshop. 01"
+subject: Programming Fundamentals
+name: Karah James
+output: html_document
+date: "2026-05-20"
+#------------------------------------#
+# Worshop 01. Introduction to Programming 
+```{r}
+#learning how R computes simple equations
+24.5+1.2
+```
+
+```{r}
+32.0/4
+```
+
+```{r}
+2+1
+```
+
+```{r}
+1:30
+
+```
+
+```{r}
+6*
+  +2
+```
+
+```{r}
+# learning to assign data frames and communicating with R to create specific outputs
+years_old<-25.7
+round(years_old) #rounds up
+floor(years_old) #round down
+```
+
+```{r}
+years_old<-25.765
+round(years_old, 2) #"2" specifies how many decimal places 
+```
+
+```{r warning=TRUE}
+#?round
+#args(round)
+#function(x,digits=0, 1, 2)
+```
+
+```{r}
+coral_count<-42
+fish_lenghts<-c(124,152,98,221,146)
+```
+
+```{r}
+coral_count +1
+```
+
+```{r}
+coral_count + coral_count
+```
+
+
+```{r}
+Coral_count<- 1
+coral_count + Coral_count
+```
+
+```{r}
+`coral count`<- 25
+```
+
+```{r}
+# Field survey data- copied code to pinpoint any errors/mistakes
+quadrat_area_m2 <- 0.25
+number_of_quadrats <- 16
+total_area_surveyed <- quadrat_area_m2 * number_of_quadrats
+
+# Let's print out the result
+print(total_area_surveyed) # surveyed is missing a "e"- fixed
+
+```
+
+```{r}
+install.packages("tidyverse")
+```
+
+```{r warning=TRUE}
+library(tidyverse)
+install.packages("dplyr")
+library(dplyr)
+install.packages("ggplot2")
+library(ggplot2)
+```
+##1.6 Data Types
+```{r}
+# Assign variable values
+site_name <- "Heron_Island"
+transect_depth_m <- 12.5
+bleaching_present <- TRUE
+
+# Check using function class()
+class(site_name)
+class(transect_depth_m)
+class(bleaching_present)
+
+# Check using function str()
+str(site_name)
+str(transect_depth_m)
+str(bleaching_present)
+
+```
+
+```{r}
+# Tracking the age of an old-growth Porites coral colony
+years_old <- 25.765
+
+# Clean this up for our summary report
+round(years_old, 2) #removed an extra "L"
+
+```
+
+```{r}
+# Make variables
+years_old <- 25.765
+rounded_age <- round(years_old, 3) #added a 3 to signify the amount of decimal places read
+
+# Combine text and data variables
+paste("Average colony age is", rounded_age, "years old")
+
+```
+##1.7 Data structures
+```{r}
+fish_lengths<-c(124,152,98,221,146)
+coral_spp<-c("Porties", "Acropora", "Montastrea")
+```
+
+```{r}
+class(fish_lengths)
+class(coral_spp)
+```
+
+```{r}
+notes<-c("Acropora", 27.5, TRUE)
+notes<-list("Acropora", 27.5, TRUE)
+notes
+```
+
+```{r}
+notes[[1]]
+```
+
+```{r}
+my_dataframe<-data.frame(no=c(1,2,3), c("Plectropomus", "Scarus", "Pomacentrus"), c(TRUE, FALSE, TRUE))
+my_dataframe
+str(my_dataframe)
+```
+
+```{r}
+my_dataframe$no=as.factor(my_dataframe$no)
+str(my_dataframe)
+```
+
+
+
+
+
+

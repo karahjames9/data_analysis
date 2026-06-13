@@ -1,5 +1,7 @@
 ---
-title: "MB5370- Workshop 2 advanced data wrangling"
+title: "MB5370 Techniques in Marine Science 1- Module. 02 Workshop 2 advanced data wrangling"
+subject: Data Science in R
+name: Karah James
 output: html_document
 date: "2026-06-04"
 ---

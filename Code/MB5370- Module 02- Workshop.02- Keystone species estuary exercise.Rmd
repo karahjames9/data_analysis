@@ -1,5 +1,6 @@
 ---
-title: "MB5370-Techniques in MS- Exercise 2.12"
+title: "MB5370-Techniques in Marine Science 1- Module. 02-Exercise 2.12"
+subject: Data Science in R
 author: "Karah James"
 output: html_document
 date: "2026-06-04"

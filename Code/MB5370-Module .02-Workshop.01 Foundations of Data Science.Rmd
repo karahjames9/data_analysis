@@ -1,5 +1,6 @@
 ---
 title: "MB5370-MOdule. 02- Workshop 1 Foundations of Data Science"
+name: Karah James
 output: html_document
 date: "2026-06-09"
 ---
