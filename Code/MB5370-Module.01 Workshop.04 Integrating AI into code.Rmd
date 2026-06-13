@@ -1,0 +1,109 @@
+---
+title: "MB5370-Techniques in Marine Science 1- Module .01 Workshop 4- Integrating AI into code"
+Subject: The developers toolbox and AI
+name: Karah James
+output: html_document
+date: "2026-05-27"
+---
+
+```{r}
+ library(tidyverse)
+ library(palmerpenguins)
+```
+
+```{r message=FALSE, warning=FALSE}
+# Create a ggplot scatter plot using the pengiuns dataset. 
+# Plot bill length on the x-axis and bill depth on the y-axis.
+# Color the points by species and use geom_point with size 3.
+# Add a minimal theme and clean labels. 
+ggplot(data = penguins) +
+  geom_point(mapping = aes(x = bill_length_mm, y = bill_depth_mm, color = species), size = 3) +
+  theme_minimal() +
+  labs(title = "Bill Length vs Bill Depth of Penguins",
+       x = "Bill Length (mm)",
+       y = "Bill Depth (mm)",
+       color = "Species")
+```
+
+```{r message=FALSE, warning=FALSE}
+# Create a ggplot scatter plot using the pengiuns dataset. 
+# Plot bill_length_mm on the y-axis and different species on the x-axis, faceted by island. 
+# Use custom colors for each species and add a minimal theme.
+ggplot(data = penguins) +
+  geom_point(mapping = aes(x = species, y = bill_length_mm, color = species), size = 3) +
+  facet_wrap(~ island) +
+  scale_color_manual(values = c("Adelie" = "blue", "Chinstrap" = "green", "Gentoo" = "orange")) +
+  theme_minimal() +
+  labs(title = "Bill Length of Penguins by Species and Island",
+       x = "Species",
+       y = "Bill Length (mm)",
+       color = "Species")
+
+
+```
+
+```{r message=FALSE, warning=FALSE}
+install.packages("ellmer")
+install.packages("chattr")
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
