@@ -5,8 +5,9 @@ name: Karah James
 output: html_document
 date: "2026-05-27"
 ---
+#Introduction: Using Ai to help data visualization. As well as ways to help filter data and challenging previous workshop knowledge by applying familiar data wragngling and organizing tactics to create plots. 
 
-```{r}
+```{r warning=FALSE}
  library(tidyverse)
  library(palmerpenguins)
 ```
@@ -38,56 +39,127 @@ ggplot(data = penguins) +
        x = "Species",
        y = "Bill Length (mm)",
        color = "Species")
-
-
 ```
-
+# 4.4 Installing Chattr(Conversational Workspace engine)
 ```{r message=FALSE, warning=FALSE}
 install.packages("ellmer")
 install.packages("chattr")
 ```
-
+# 4.3 Conditinal logic- filtering data
 ```{r}
+# Simple Example: Checking Sea Surface Temperature (SST)
+sst <- 30.2
+
+if (sst > 29.5) {
+  print("Warning: Marine heatwave threshold exceeded!")
+} else {
+  print("SST remains within baseline parameters.")
+}
 
 ```
 
 ```{r}
+#the function "mutate" allows an argument or certain parameter to be executed when explained within the code.
+# Sample coral data
+coral_monitoring <- tibble(
+  site = c("Site_A", "Site_B", "Site_C"),
+  depth_m = c(12, 35, 8)
+)
+# As you can see below, we are telling the code to recognize "zone" and "depth," if a zone has a certain depth below 30m then its labeled as a shallow reef and if a zone is above 30m depth then its a deep reef.
+# Classify depth using if_else
+coral_monitoring <- coral_monitoring %>% 
+  mutate(zone = if_else(depth_m > 30, "Deep Reef", "Shallow Reef"))
 
 ```
 
 ```{r}
+coral_monitoring <- coral_monitoring %>% 
+  mutate(reef_category = case_when(
+    depth_m < 10  ~ "Lagoon / Flats",
+    depth_m <= 30 ~ "Crest / Slope",
+    depth_m > 30  ~ "Mesophotic / Deep",
+    TRUE          ~ "Unclassified" # Catch-all remainder
+  ))
 
 ```
 
 ```{r}
+marine_stations<- tibble(
+  salinity=c(5,28,32,12)
+)
+```
+
+```{r}
+marine_stations<-marine_stations %>%
+  mutate(environmental_type = case_when(
+    salinity < 15 ~ "Estuarine",
+    salinity <= 30 ~ "Brackish",
+    salinity > 30 ~ "Marine" ,
+  ))
+head(marine_stations)
+```
+# 4.4 Automation: Iterating efficiency
+```{r}
+# for-loop repeats code chunk for each element in a designated sequence
+for (year in 2020:2024) {
+  print(paste("Processing climate data for year:", year))
+}
+```
+
+```{r}
+#tracks real-world data- this case it reads 12 monthly turtle tracking devices
+# Loop across index sequences
+transect_lengths <- c(50, 100, 25, 75)
+
+for (i in seq_along(transect_lengths)) {
+  print(paste("Transect number", i, "measures", transect_lengths[i], "metres."))
+}
+```
+
+```{r}
+site_areas <- c(144, 400, 625)
+results <- numeric(length(site_areas)) # Must build an empty container first
+
+for (i in seq_along(site_areas)) {
+  results[i] <- sqrt(site_areas[i])
+}
+```
+
+```{r}
+library(purrr)
+# Map directly and define your expected output type explicitly
+mapped_results <- map_dbl(site_areas, sqrt)
 
 ```
 
 ```{r}
+# Iterate a summary function over split lists of data
+iris %>% 
+  split(.$Species) %>% 
+  map(~summary(.x))
+
+```
+# 4.5 Writing custom functions
+```{r}
+# Function Definition
+calculate_coral_mortality <- function(initial_count, surviving_count) {
+  
+  # Logic safety switch using our conditional tools!
+  if (initial_count <= 0) {
+    stop("Initial count must be greater than zero.")
+  }
+  
+  mortality_rate <- (initial_count - surviving_count) / initial_count
+  return(mortality_rate)
+}
+
+# Utilizing your custom function
+calculate_coral_mortality(initial_count = 120, surviving_count = 84)
 
 ```
 
 ```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
+# student exercise 4: Custom function construction task
 
 ```
 
