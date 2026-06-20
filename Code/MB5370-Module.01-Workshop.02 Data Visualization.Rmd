@@ -9,7 +9,6 @@ date: "2026-05-21"
 #Turning data into graphics with code is a great tool to help scientists explore the datasets to answer research questions. 
 
 ```{r warning=FALSE}
-install.packages("tidyverse")
 library("tidyverse")
 ```
 
