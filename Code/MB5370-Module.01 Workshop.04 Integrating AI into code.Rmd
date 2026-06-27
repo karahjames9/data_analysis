@@ -42,8 +42,8 @@ ggplot(data = penguins) +
 ```
 # 4.4 Installing Chattr(Conversational Workspace engine)
 ```{r message=FALSE, warning=FALSE}
-install.packages("ellmer")
-install.packages("chattr")
+library("ellmer")
+library("chattr")
 ```
 # 4.3 Conditinal logic- filtering data
 ```{r}
@@ -69,7 +69,7 @@ coral_monitoring <- tibble(
 # Classify depth using if_else
 coral_monitoring <- coral_monitoring %>% 
   mutate(zone = if_else(depth_m > 30, "Deep Reef", "Shallow Reef"))
-
+head(coral_monitoring)
 ```
 
 ```{r}
@@ -80,7 +80,7 @@ coral_monitoring <- coral_monitoring %>%
     depth_m > 30  ~ "Mesophotic / Deep",
     TRUE          ~ "Unclassified" # Catch-all remainder
   ))
-
+head(coral_monitoring)
 ```
 
 ```{r}
@@ -123,6 +123,7 @@ results <- numeric(length(site_areas)) # Must build an empty container first
 for (i in seq_along(site_areas)) {
   results[i] <- sqrt(site_areas[i])
 }
+head(site_areas)
 ```
 
 ```{r}
@@ -155,22 +156,30 @@ calculate_coral_mortality <- function(initial_count, surviving_count) {
 
 # Utilizing your custom function
 calculate_coral_mortality(initial_count = 120, surviving_count = 84)
+```
 
+#Student Exercise #4: Custom Function Construction Task
+```{r}
+convert_temp_c_to_f<-function(temp_c) {
+  if (temp_c < -273.15) {
+    stop("Temperature cannot be below absolute zero.")
+  }
+  temp_f <- (temp_c * 9/5) + 32
+  return(temp_f)
+}
+convert_temp_c_to_f(temp_c=-30)
 ```
 
 ```{r}
-# student exercise 4: Custom function construction task
-
+convert_temp_c_to_f<-function(temp_c) {
+  if (temp_c < -273.15) {
+    stop("Temperature cannot be below absolute zero.")
+  }
+  temp_f <- (temp_c * 9/5) + 32
+  return(temp_f)
+}
+convert_temp_c_to_f(temp_c=30)
 ```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
 
 
 
