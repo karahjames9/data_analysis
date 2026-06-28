@@ -1,30 +1,197 @@
 ---
-title: "MB5370-MOdule. 02- Workshop 1 Foundations of Data Science"
+title: "MB5370-Module. 02- Workshop 1 Foundations of Data Science"
 name: Karah James
 output: html_document
 date: "2026-06-09"
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r warning=FALSE}
+# Load the primary data science framework and Excel import library
+library(tidyverse)
+library(readxl)
+library("here")
 ```
 
-## R Markdown
+```{r message=FALSE, warning=FALSE}
+# Practice Import A: Loading a standard comma-separated plain text file
+benthic_cover <- read.csv("C:/Users/jd131798/Downloads/data_analysis/Data/reef_cover_log.csv")
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+# Practice Import B: Parsing a tab-separated telemetry instrument array string
+acoustic_stream <- read_tsv("C:/Users/jd131798/Downloads/data_analysis/Data/acoustic_telemetry_stream.txt")
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+# Practice Import C: Targeting a specific sheet in a multi-tab Excel spreadsheet
+fisheries_annual <- read_excel("C:/Users/jd131798/Downloads/data_analysis/Data/fish_catch_data.xlsx", sheet = "Commercial_2026")
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r message=FALSE, warning=FALSE}
+mangrove_data <- read_csv("C:/Users/jd131798/Downloads/data_analysis/Data/mangrove_survey_raw.csv")
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r message=FALSE}
+mangrove_data <- read_csv(
+  here::here("Data/mangrove_survey_raw.csv"),
+  skip = 5,   # Skip the first 5 lines of field notes
+  na = c(".", "NA", "9999", "ND", "blank"))
+head(mangrove_data)
+```
+
+```{r}
+# compare the two data frame structures
+benthic_cover_df <- as.data.frame(benthic_cover)
+head(benthic_cover_df)
+```
+
+```{r}
+print(benthic_cover)
+```
+
+```{r message=FALSE, warning=FALSE}
+library(palmerpenguins)
+data("penguins")
+glimpse(penguins)
+```
+
+```{r}
+summary(penguins)
+```
+
+```{r}
+morphology_metrics <- select(penguins, species, bill_length_mm, bill_depth_mm, body_mass_g)
+glimpse(morphology_metrics)
+```
+
+```{r}
+spatial_block <- select(penguins, species:island)
+```
+
+```{r}
+clean_scientific_fields <- select(penguins, -year)
+```
+
+```{r}
+# Isolate observations belonging to a single categorical target group
+adelie_cohort <- filter(penguins, species == "Adelie")
+
+# Sift out individuals using continuous numerical boundary thresholds
+# Preserves only large penguins whose mass exceeds 4500 grams
+heavy_penguins <- filter(penguins, body_mass_g > 4500)
+
+# Combine multiple conditional parameters across separate attributes
+# Preserves records matching Gentoo penguins sampled explicitly on Biscoe Island
+biscoe_gentoo <- filter(penguins, species == "Gentoo" & island == "Biscoe")
+
+# Sift records matching multiple targeting flags within an explicit set
+sub_islands <- filter(penguins, island %in% c("Dream", "Torgersen"))
+```
+
+```{r}
+# Sort penguins by ascending body mass (Default setting: Smallest mass first)
+lightest_first <- arrange(penguins, body_mass_g)
+
+# Sort penguins in descending sequence using the desc() layout wrapper
+heaviest_first <- arrange(penguins, desc(body_mass_g))
+
+# Execute nested sorting criteria: Group by species, then sort by descending bill length
+stratified_morphology <- arrange(penguins, species, desc(bill_length_mm))
+```
+
+```{r}
+penguins_final <- penguins |>
+  mutate(bill_ratio = bill_length_mm / bill_depth_mm) |>
+  filter(species == "Adelie")
+head(penguins_final)
+```
+
+```{r}
+# Calculate a new morphological ratio in our environment
+penguin_ratios <- penguins  |> 
+  mutate(body_mass_kg = body_mass_g / 1000,   # Convert grams to kilograms
+         bill_ratio = bill_length_mm / bill_depth_mm  # Bill ratio
+  )
+
+# View your newly engineered variables appended to the far-right columns
+glimpse(penguin_ratios)
+```
+#1.8 Data aggregation and ecological summarisation
+```{r}
+# Grouping our active memory penguins by species
+grouped_penguins <- group_by(penguins, species)
+
+# Notice that the table looks identical, but metadata notes 'Groups: species [3]'
+print(grouped_penguins)
+
+# Collapsing the buckets into explicit summary metrics
+species_mass_summary <- summarise(grouped_penguins,
+  mean_mass_g = mean(body_mass_g)
+)
+
+print(species_mass_summary)
+```
+
+```{r}
+# Overcoming the missing value trap using na.rm = TRUE
+biological_signal <- penguins %>%
+  group_by(species, sex) %>%
+  summarise(
+    sample_size = n(),                                     # Count total individuals per category
+    mean_mass_g = mean(body_mass_g, na.rm = TRUE),         # Calculate mean ignoring missing cells
+    sd_mass_g   = sd(body_mass_g, na.rm = TRUE)            # Standard deviation calculation
+  )
+
+print(biological_signal)
+```
+
+#challenge
+```{r}
+penguin_body_mass <- penguins  |> 
+  mutate(body_mass_kg = body_mass_g / 1000)   # Convert grams to kilograms
+head(penguin_body_mass)
+```
+
+
+```{r}
+penguin_body_size_and_shape <- penguins %>%
+  group_by(species, island) %>%
+  summarise(
+    sample_size = n(),                                     # Count total individuals per category
+    mean_mass_g = mean(body_mass_g, na.rm = TRUE),         # Calculate mean ignoring missing cells
+    sd_mass_g   = sd(body_mass_g, na.rm = TRUE)            # Standard deviation calculation
+  )
+
+print(penguin_body_size_and_shape)
+```
+
+```{r}
+penguin_body_size_and_shape <- penguins |>
+  group_by(species, island) |>
+  summarise(
+    mean_mass = mean(body_mass_g, na.rm = TRUE),
+    sd_mass = sd(body_mass_g, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+  ) |>
+  ggplot(aes(x = species, y = mean_mass, colour = island)) +
+  geom_point(size = 3) +
+  geom_errorbar(aes(ymin = mean_mass - sd_mass, 
+                    ymax = mean_mass + sd_mass), 
+                width = 0.2) +
+  labs(title = "Mean Body Mass by Species and Island",
+       subtitle = "Error bars represent standard deviation",
+       y = "Mean Body Mass (g)",
+       x = "Species") +
+  theme_minimal()
+
+penguin_body_size_and_shape
+
+```
+
+
+
+
+
+
+
+
+
+
+
