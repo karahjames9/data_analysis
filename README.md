@@ -1,2 +1,2 @@
 # data_analysis
-Techniques in Marine Science
+This repository encapsulates all that was done in the first module of Techniques in Marine Science, which was Intro to programming. The main sections that are key to this project was the Keystone Species which analyzed 
